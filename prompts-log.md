@@ -4,7 +4,7 @@ All prompts sent to AI tools during development of the TimeTracker web applicati
 
 ---
 
-## Tool: Bolt.new
+## Tool: v0
 
 ### Prompt 1 — Initial project generation
 
