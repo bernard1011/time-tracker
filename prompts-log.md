@@ -72,3 +72,36 @@ immediately after starting the timer.
 ```
 
 **Result:** Added `refreshInterval: 2000` to `useEntries` SWR hook so the list polls the API every 2 seconds and picks up new entries immediately.
+
+---
+
+### Prompt 5 — Switch database to PostgreSQL for Vercel deployment
+
+```
+Deploy to Vercel fails because SQLite is not supported on serverless.
+Switch to PostgreSQL using Neon as managed database provider.
+```
+
+**Result:** Updated `prisma/schema.prisma` provider from `sqlite` to `postgresql`, created Neon project, updated `DATABASE_URL` in `.env` and Vercel environment variables, ran `prisma db push` to sync schema.
+
+---
+
+### Prompt 6 — Fix Prisma Client not generated during Vercel build
+
+```
+Vercel build fails with: Cannot find module '.prisma/client/default'.
+Prisma Client is not being generated during the build.
+```
+
+**Result:** Added `prisma generate &&` before `next build` in the `build` script in `package.json`.
+
+---
+
+### Prompt 7 — Fix action buttons not visible on mobile
+
+```
+Edit and delete buttons on time entries are not visible on mobile —
+they only show on hover which doesn't work on touch devices.
+```
+
+**Result:** Updated `TimeEntryItem` to show buttons with full opacity on mobile (`opacity-100`) and hover-only on desktop (`sm:opacity-0 sm:group-hover:opacity-100`).
