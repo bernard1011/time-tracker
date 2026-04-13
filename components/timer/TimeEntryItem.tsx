@@ -159,7 +159,7 @@ export function TimeEntryItem({
         {formatDurationForInput(liveDuration)}
       </div>
 
-      <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+      <div className="flex gap-1 opacity-100 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100">
         <Button
           size="icon"
           variant="ghost"
