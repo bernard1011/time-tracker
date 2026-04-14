@@ -8,43 +8,32 @@ export function useTimer() {
   const { activeEntry, refresh: refreshActive } = useActiveEntry()
   const { refresh: refreshEntries } = useEntries()
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
-  const [isRunning, setIsRunning] = useState(false)
+  const isRunning = !!activeEntry
 
-  // Calculate elapsed time from active entry
   useEffect(() => {
-    if (activeEntry) {
-      const startTime = new Date(activeEntry.startTime).getTime()
-      const now = Date.now()
-      const elapsed = Math.floor((now - startTime) / 1000)
-      setElapsedSeconds(elapsed)
-      setIsRunning(true)
-    } else {
+    if (!activeEntry) {
       setElapsedSeconds(0)
-      setIsRunning(false)
+      return
     }
-  }, [activeEntry])
 
-  // Timer tick
-  useEffect(() => {
-    if (!isRunning) return
+    const tick = () => {
+      const startTime = new Date(activeEntry.startTime).getTime()
+      setElapsedSeconds(Math.floor((Date.now() - startTime) / 1000))
+    }
 
-    const interval = setInterval(() => {
-      setElapsedSeconds((prev) => prev + 1)
-    }, 1000)
-
+    tick() // immediate update on mount / return from background
+    const interval = setInterval(tick, 1000)
     return () => clearInterval(interval)
-  }, [isRunning])
+  }, [activeEntry])
 
   const start = useCallback(
     async (taskName: string, projectId?: string | null) => {
       if (!taskName.trim()) return
-
       await createEntry({
         taskName: taskName.trim(),
         projectId: projectId || null,
         startTime: new Date().toISOString(),
       })
-
       refreshActive()
       refreshEntries()
     },
@@ -53,14 +42,11 @@ export function useTimer() {
 
   const stop = useCallback(async () => {
     if (!activeEntry) return
-
     const endTime = new Date()
     const duration = Math.floor(
       (endTime.getTime() - new Date(activeEntry.startTime).getTime()) / 1000
     )
-
     await stopEntry(activeEntry.id, endTime.toISOString(), duration)
-
     refreshActive()
     refreshEntries()
   }, [activeEntry, refreshActive, refreshEntries])
@@ -69,7 +55,6 @@ export function useTimer() {
     const hrs = Math.floor(seconds / 3600)
     const mins = Math.floor((seconds % 3600) / 60)
     const secs = seconds % 60
-
     return `${hrs.toString().padStart(2, "0")}:${mins
       .toString()
       .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`
